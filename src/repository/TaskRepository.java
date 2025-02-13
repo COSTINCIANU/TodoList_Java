@@ -1,5 +1,6 @@
 package repository;
 
+import dao.Env;
 import dao.Database;
 import models.Task;
 import models.Category;
@@ -10,30 +11,17 @@ import java.sql.SQLException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 
 
 public class TaskRepository {
-    private Connection connection;
-
-    public TaskRepository() {
-        try {
-            // Connection
-            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/todo_list", "root", "");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    private static Connection connection = Database.getConnection();
+    // Ajouter un compte
 
     // Ajouter une tâche
     public void add(Task task) {
         String sql = "INSERT INTO task (title, description, createAt, status, account_id) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection connection = Database.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try {  PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, task.getTitle());
             stmt.setString(2, task.getDescription());
@@ -87,8 +75,8 @@ public class TaskRepository {
                 "JOIN task_category tc ON c.id = tc.category_id " +
                 "WHERE tc.task_id = ?";
 
-        try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setInt(1, taskId);
             ResultSet rs = stmt.executeQuery();
@@ -110,9 +98,9 @@ public class TaskRepository {
     public void addCategoryToTask(int taskId, int categoryId) {
         String sql = "INSERT INTO task_category (task_id, category_id) VALUES (?, ?)";
 
-        try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try  {
 
+            PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, taskId);
             stmt.setInt(2, categoryId);
 

@@ -2,6 +2,7 @@ package repository;
 // Import  BCryptUtil
 import BCrypt.BCrypt;
 
+import dao.Env;
 import dao.Database;
 import models.Account;
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 import java.sql.*;
 
 public class AccountRepository {
-
+    private static Connection connection = Database.getConnection();
     // Ajouter un compte
     public void add(Account account) {
         // Utilisation de la méthode getConnection pour obtenir une connexion
-        try (Connection connection = Database.getConnection()) {
+        try  {
             // Hacher le mot de passe avant de l'ajouter dans la base de données
             String salt = BCrypt.gensalt();  // Générer un salt
             String hashedPassword = BCrypt.hashpw(account.getPassword(), salt);  // Hacher le mot de passe avec le salt
@@ -46,7 +47,7 @@ public class AccountRepository {
     // Méthode pour récupérer un compte par son email
     public Account findByEmail(String email) {
         Account account = null;
-        try (Connection connection = Database.getConnection()) {
+        try  {
             String query = "SELECT * FROM account WHERE email = ?";
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 stmt.setString(1, email);
@@ -69,7 +70,7 @@ public class AccountRepository {
     // Autres méthodes (pour récupérer tous les comptes)
     public List<Account> findAll() {
         List<Account> accounts = new ArrayList<>();
-        try (Connection connection = Database.getConnection()) {
+        try {
             String query = "SELECT * FROM account";
             try (PreparedStatement stmt = connection.prepareStatement(query)) {
                 ResultSet rs = stmt.executeQuery();

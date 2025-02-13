@@ -1,5 +1,6 @@
 package repository;
 
+import dao.Env;
 import dao.Database;
 import models.Category;
 import java.sql.*;
@@ -7,10 +8,12 @@ import java.util.*;
 
 public class CategoryRepository {
 
+    private static Connection connection = Database.getConnection();
+    // Ajouter un compte
     // Méthode ajouter d'une catégorie en base de données
     public void add(Category category) {
         // Récupérer la connexion base de données
-        try (Connection connection = Database.getConnection()) {
+        try {
             // Vérifier si la connexion est valide
             if (connection == null) {
                 System.out.println("Échec de la connexion à la base de données.");
@@ -38,7 +41,7 @@ public class CategoryRepository {
     // Récupére toutes les catégories de la base de données
     public List<Category> findAll() {
         List<Category> categories = new ArrayList<>();
-        try (Connection connection = Database.getConnection()) {
+        try {
             if (connection == null) {
                 System.out.println("Échec de la connexion à la base de données.");
                 // Retourner une liste vide si la connexion échoue
